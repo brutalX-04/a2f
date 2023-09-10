@@ -1,1 +1,1 @@
-<h2 style="text-align: center;">MAINTENANCE</h2>
+<h2>MAINTENANCE</h2>
