@@ -4,3 +4,8 @@
 <p>3</p>
 <p>3</p>
 <p>3</p>
+$ pkg install clang python libffi openssl libsodium -y
+$ SODIUM_INSTALL=system pip install pynacl
+
+$ pip install pycryptodome
+$ pip install pycryptodomex
