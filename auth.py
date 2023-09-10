@@ -25,7 +25,7 @@ h  = '\x1b[0;92m' 	# HIJAU
 
 # CALLING
 rs = requests.Session()
-time = datetime.now()
+timer = datetime.now()
 status = ''
 limit = ''
 
@@ -58,41 +58,45 @@ class lisensi:
 		try:
 			try:
 				uid = open('.uuid.txt','r').read()
+				headers = {'authority': 'a2flisensi.000webhostapp.com', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'en-US,en;q=0.9,id;q=0.8', 'cache-control': 'max-age=0', 'content-type': 'application/x-www-form-urlencoded', 'origin': 'https://a2flisensi.000webhostapp.com', 'referer': 'https://a2flisensi.000webhostapp.com/', 'sec-ch-ua': '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Linux"', 'sec-fetch-dest': 'document', 'sec-fetch-mode': 'navigate', 'sec-fetch-site': 'same-origin', 'sec-fetch-user': '?1', 'upgrade-insecure-requests': '1', 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'}
+				header = { 'authority': 'a2flisensi.000webhostapp.com', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'en-US,en;q=0.9,id;q=0.8', 'cache-control': 'max-age=0', 'cookie': 'PHPSESSID=qoh2go2r3ld2tfjr08h2sqkhd3', 'sec-ch-ua': '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Linux"', 'sec-fetch-dest': 'document', 'sec-fetch-mode': 'navigate', 'sec-fetch-site': 'none', 'sec-fetch-user': '?1', 'upgrade-insecure-requests': '1', 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36', }
+				data = {
+				    'uuid': uid,
+				}
 
-			except:
-				print('Anda Belum terdaftar, Tunggu Sebentar ...')
-				self.join()
+				get = bs(rs.get('https://a2flisensi.000webhostapp.com/index.php',headers=header).text, 'html.parser')
+				post = rs.post('https://a2flisensi.000webhostapp.com/getuser.php', headers=headers, data=data).text
+				if 'Tidak ada data' in post:
+					print('Anda Belum terdaftar, Tunggu Sebentar ...');time.sleep(1)
+					banner()
+					self.join()
 
-			headers = {'authority': 'a2flisensi.000webhostapp.com', 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'accept-language': 'en-US,en;q=0.9,id;q=0.8', 'cache-control': 'max-age=0', 'content-type': 'application/x-www-form-urlencoded', 'origin': 'https://a2flisensi.000webhostapp.com', 'referer': 'https://a2flisensi.000webhostapp.com/', 'sec-ch-ua': '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Linux"', 'sec-fetch-dest': 'document', 'sec-fetch-mode': 'navigate', 'sec-fetch-site': 'same-origin', 'sec-fetch-user': '?1', 'upgrade-insecure-requests': '1', 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36'}
+				elif 'ID' in post:
+					idd = uid.split('-')
+					date = re.search(' "DATE":"(.*?)"', post).group(1)
+					status = re.search('"STATUS":"(.*?)"', post).group(1)
+					limit = re.search('"LIMIT":"(.*?)"', post).group(1)
+					jumlah = get.find_all('tr')
+					print('UID        : %s%s-%s-%s%s'%(h,idd[0],idd[1],'...',p))
+					print('Date Join  : %s%s%s'%(h, date, p))
+					print('Status     : %s%s%s'%(h, status, p))
+					print('Limit Req  : %s%s%s'%(h, limit, p))
+					print('Total User : %s%s%s'%(h, len(jumlah), p))
 
-			data = {
-			    'uuid': uid,
-			}
-
-			post = rs.post('https://a2flisensi.000webhostapp.com/getuser.php', headers=headers, data=data).text
-			if 'Tidak ada data' in post:
+			except Exception as e:
 				print('Anda Belum terdaftar, Tunggu Sebentar ...');time.sleep(1)
 				banner()
 				self.join()
 
-			elif 'ID' in post:
-				idd = uid.split('-')
-				date = re.search(' "DATE":"(.*?)"', post).group(1)
-				status = re.search('"STATUS":"(.*?)"', post).group(1)
-				limit = re.search('"LIMIT":"(.*?)"', post).group(1)
-				print('UID       : %s%s-%s-%s%s'%(h,idd[0],idd[1],'...',p))
-				print('Date Join : %s%s%s'%(h,date,p))
-				print('Status    : %s%s%s'%(h,status,p))
-				print('Limit Req : %s%s%s'%(h,limit,p))
-
 		except Exception as e:
 			print('%sFailled Get User Data%s'%(m,p))
+			print(e)
 
 	def join(self):
 		try:
 			uid = uuid.uuid4()
 			open('.uuid.txt', 'w').write(str(uid))
-			date = '%s-%s-%s'%(time.day, time.month, time.year)
+			date = '%s-%s-%s'%(timer.day, timer.month, timer.year)
 			data = {
 			    'uuid': uid,
 			    'date': date,
